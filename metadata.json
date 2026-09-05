@@ -1,0 +1,6 @@
+{
+  "name": "BuyFlow AI",
+  "description": "Agentic commerce platform making merchant catalogs AI-readable and enabling autonomous AI buyers with guarded Razorpay payments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
