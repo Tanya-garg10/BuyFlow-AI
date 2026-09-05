@@ -4,8 +4,6 @@
 
 BuyFlow AI turns merchant catalogs into machine-readable knowledge graphs and enables autonomous AI Buyers to complete end-to-end purchasing journeys — from a natural language request to a verified Razorpay payment — while enforcing zero-trust financial guardrails.
 
----
-
 ## Features
 
 - **Natural Language Shopping** — AI parses queries like *"laptop under ₹60K with 16GB RAM for coding"* and maps them to catalog constraints automatically.
@@ -16,8 +14,6 @@ BuyFlow AI turns merchant catalogs into machine-readable knowledge graphs and en
 - **Audit Trail & Explainability** — Immutable event log and transparent AI decision trees with confidence scores.
 - **Analytics Dashboard** — Real-time conversion funnel and merchant revenue metrics.
 
----
-
 ## Tech Stack
 
 | Layer | Technology |
@@ -27,8 +23,6 @@ BuyFlow AI turns merchant catalogs into machine-readable knowledge graphs and en
 | AI | Google Gemini (`@google/genai`) |
 | Payments | Razorpay Test Gateway |
 | Build | Vite, esbuild |
-
----
 
 ## Getting Started
 
@@ -79,8 +73,6 @@ npm run build
 npm run start
 ```
 
----
-
 ## How It Works
 
 1. **User sends a natural language query** to the AI Buyer Agent.
@@ -90,8 +82,6 @@ npm run start
 5. **Policy Engine evaluates** the cart before payment. High-value orders (≥ ₹50,000) are blocked until explicit human approval.
 6. **User approves** → Razorpay order is created → payment is completed via Test Card / UPI / NetBanking.
 7. **Signature is verified** server-side (HMAC SHA256) → order is confirmed and logged to the Audit Trail.
-
----
 
 ## Financial Guardrail Policies
 
@@ -103,8 +93,6 @@ npm run start
 | `POL-PAY-02` | Initiate Payment | Amount ≥ ₹50,000 | Explicit approval required |
 | `POL-REF-01` | Refund | AI Agent | Permanently forbidden |
 | `POL-RETRY-01` | Payment failure | Gateway rejection | Halt & log — no auto-retry |
-
----
 
 ## API Reference
 
@@ -138,8 +126,6 @@ npm run start
 | `GET` | `/api/decisions` | AI decision trees |
 | `GET` | `/api/analytics` | Conversion funnel metrics |
 
----
-
 ## Project Structure
 
 ```
@@ -158,8 +144,6 @@ BuyFlow-AI/
 ├── .env.example          # Environment variable template
 └── vite.config.ts        # Vite build config
 ```
-
----
 
 ## License
 
