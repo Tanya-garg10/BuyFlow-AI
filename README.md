@@ -1,145 +1,166 @@
-# BuyFlow AI — Autonomous Agentic Commerce & Guarded Payments
-> **Built for the Razorpay AI Buildathon — Track 01: AI Growth & Agentic Commerce**
+# BuyFlow AI
 
-BuyFlow AI turns merchant catalogs into machine-readable knowledge graphs and enables autonomous AI Buyers to complete end-to-end purchasing journeys—from natural language request to verified Razorpay payment—while enforcing zero-trust financial guardrails.
+> Autonomous Agentic Commerce with Guarded Payments
 
----
-
-## ⚡ The 2-Minute Hackathon Demo
-
-Execute the full flow in under 2 minutes:
-
-1. **AI Buyer Search**:
-   - Query: *"I need a laptop under ₹60,000 for coding with at least 16GB RAM. Also suggest a mouse."*
-   - Or click **`⚡ Run 2-Min Demo`** in the top navigation bar.
-2. **AI Reasoning & Upsell**:
-   - The AI extracts constraints (`category: Laptop`, `budget: ₹60,000`, `RAM: 16GB`, `use_case: coding`).
-   - Evaluates 13 catalog products and recommends **ProBook 14** (₹54,999) with a 98% match score.
-   - Automatically pairs it with the **ErgoMouse M2** (₹1,299) as contextual cross-sell.
-3. **Cart Assembly & Policy Intercept**:
-   - Items staged into cart (Total + 18% GST = ₹66,432).
-   - **Policy Engine intercepts**: Blocks autonomous payment execution under `Rule POL-PAY-01` & `Rule POL-PAY-02` (High value > ₹50,000).
-4. **Explicit Human Approval**:
-   - Human reviews itemized breakdown and clicks **`[Approve Payment]`**.
-5. **Razorpay Test Payment**:
-   - Backend calls Razorpay `/orders` API and returns order ID.
-   - Test payment completes via Test Card, UPI (`success@razorpay`), or NetBanking.
-   - Server cryptographically verifies HMAC SHA256 signature.
-6. **Graceful Failure Handling Simulation**:
-   - Toggle **`Fail Sim: ON`** in top bar.
-   - Run checkout again or select UPI `failure@razorpay`.
-   - Payment fails cleanly: system reports diagnostic reason, marks status as `FAILED`, and strictly avoids blind auto-retries.
-7. **Verifiable Telemetry**:
-   - Inspect the **Audit Trail** and **AI Decisions** tabs for immutable logs and transparent reasoning trees.
+BuyFlow AI turns merchant catalogs into machine-readable knowledge graphs and enables autonomous AI Buyers to complete end-to-end purchasing journeys — from a natural language request to a verified Razorpay payment — while enforcing zero-trust financial guardrails.
 
 ---
 
-## 🏗️ Architectural Flow
+## Features
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor User as User / Approver
-    participant Buyer as AI Buyer Agent
-    participant Catalog as Merchant Catalog
-    participant Policy as Policy Engine (Guardrail)
-    participant Razorpay as Razorpay Test Gateway
-    participant Ledger as Audit Trail & Orders
-
-    User->>Buyer: "Need laptop under ₹60K for coding with 16GB RAM + mouse"
-    Buyer->>Buyer: Parse constraints (Laptop, budget <= 60000, 16GB RAM)
-    Buyer->>Catalog: search_products(category='Laptop', budget=60000)
-    Catalog-->>Buyer: [ProBook 14, AirLite 13, DevBook Pro 16]
-    Buyer->>Catalog: compare_products([LP001, LP003, LP002])
-    Buyer->>Catalog: suggest_upsell(LP001) -> ErgoMouse M2
-    Buyer->>User: Recommend ProBook 14 (98% match) + ErgoMouse M2
-    User->>Buyer: Click "Add Both to Cart"
-    Buyer->>Policy: Initiate payment evaluation
-    Note over Policy: Enforce POL-PAY-01 & POL-PAY-02<br/>Autonomous payment is BLOCKED
-    Policy-->>User: Trigger Human Approval Dialog
-    User->>Policy: Explicit User Approval Granted
-    Policy->>Razorpay: POST /api/payment/create-order
-    Razorpay-->>User: Razorpay Checkout (order_xxx)
-    User->>Razorpay: Submit Test Payment
-    Razorpay->>Policy: POST /api/payment/verify (Signature Verification)
-    Policy->>Ledger: Record Order CONFIRMED & Append Audit Trail Event
-    Ledger-->>User: Order Receipt & Delivery Dispatch
-```
+- **Natural Language Shopping** — AI parses queries like *"laptop under ₹60K with 16GB RAM for coding"* and maps them to catalog constraints automatically.
+- **AI Recommendation Engine** — Scores products by match percentage, suggests contextual upsells, and assembles the cart.
+- **Policy Engine (Guardrails)** — Blocks autonomous payment execution for high-value orders and enforces explicit human approval.
+- **Razorpay Integration** — Creates real Razorpay orders and verifies HMAC SHA256 payment signatures server-side.
+- **Failure Handling** — Clean failure reporting with no blind auto-retries (Policy `POL-RETRY-01`).
+- **Audit Trail & Explainability** — Immutable event log and transparent AI decision trees with confidence scores.
+- **Analytics Dashboard** — Real-time conversion funnel and merchant revenue metrics.
 
 ---
 
-## 🛡️ Financial Guardrail Policies
+## Tech Stack
 
-| Policy ID | Action | Condition | Resolution |
-|---|---|---|---|
-| `POL-CAT-01` | `search_products`, `compare_products` | Any | **ALLOWED** (Autonomous) |
-| `POL-CART-01` | `add_to_cart` | Valid catalog item | **ALLOWED** (Autonomous) |
-| `POL-PAY-01` | `initiate_payment` | Without user approval | **BLOCKED / GATED** (Requires User Approval) |
-| `POL-PAY-02` | `initiate_payment` | Amount >= ₹50,000 | **EXPLICIT APPROVAL REQUIRED** |
-| `POL-REF-01` | `refund` | AI Agent | **PERMANENTLY FORBIDDEN** (Merchant Admin Only) |
-| `POL-RETRY-01` | `payment_failure` | Gateway rejection | **HALT & LOG** (Zero blind auto-retries) |
-
----
-
-## 🌐 API Reference
-
-### Catalog & Discovery
-- `GET /api/products` — List all AI-indexed catalog items (filters: `category`, `search`).
-- `POST /api/products` — Create / update product with AI schema attributes.
-
-### Agentic Intelligence
-- `POST /api/agent/search` — Natural language query processor, constraint extractor, comparator, and upsell engine.
-- `POST /api/agent/recommend` — Recommend contextual peripherals for given base SKU.
-
-### Cart & Checkout
-- `GET /api/cart/:id` — Retrieve active cart.
-- `POST /api/cart` — Add line item with attribution tag (`ai_buyer` vs `user`).
-- `DELETE /api/cart/:cartId/items/:productId` — Remove line item.
-
-### Guardrails & Payments
-- `POST /api/payment/policy-check` — Evaluates Policy Engine guardrails against cart parameters.
-- `POST /api/payment/create-order` — Creates Razorpay order (or authenticated mock order).
-- `POST /api/payment/verify` — Server-side HMAC SHA256 payment signature verification.
-
-### Telemetry & Audit
-- `GET /api/orders` — List confirmed and failed orders with transaction references.
-- `GET /api/audit` — Immutable chronologically sorted event stream.
-- `GET /api/decisions` — Explainable AI decision trees with confidence scores.
-- `GET /api/analytics` — Real-time conversion funnel and merchant revenue metrics.
-- `POST /api/demo/run-scenario` — 1-Click test execution for fast 2-minute judge reviews.
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, TypeScript, Tailwind CSS v4 |
+| Backend | Node.js, Express, TypeScript (tsx) |
+| AI | Google Gemini (`@google/genai`) |
+| Payments | Razorpay Test Gateway |
+| Build | Vite, esbuild |
 
 ---
 
-## ⚙️ Environment Configuration
+## Getting Started
 
-Set credentials in `.env`:
+### Prerequisites
 
-```env
-# Optional: Live Razorpay Test Mode keys (defaults to built-in Test Mode simulator)
-RAZORPAY_KEY_ID=rzp_test_YourKeyHere
-RAZORPAY_KEY_SECRET=YourSecretHere
+- Node.js 18+
+- A [Razorpay Test Mode](https://dashboard.razorpay.com/) account (optional — mock mode works without it)
+- A [Google Gemini API Key](https://aistudio.google.com/app/apikey) (optional — for dynamic AI explanations)
 
-# Set to true to force offline test simulation
-MOCK_PAYMENT=true
-
-# Optional: Gemini API Key for dynamic natural language explanations
-GEMINI_API_KEY=
-```
-
----
-
-## 🚀 Running the Project
+### Installation
 
 ```bash
+# Clone the repo
+git clone https://github.com/Tanya-garg10/BuyFlow-AI.git
+cd BuyFlow-AI
+
 # Install dependencies
 npm install
 
-# Start local server (port 3000)
+# Copy environment config
+cp .env.example .env
+```
+
+### Environment Setup
+
+Edit `.env` with your credentials:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxxxx
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+MOCK_PAYMENT=true   # set to false to use live Razorpay test keys
+APP_URL=http://localhost:3000
+```
+
+> If `MOCK_PAYMENT=true`, the app runs fully offline with simulated payment transitions — no Razorpay keys needed.
+
+### Run Locally
+
+```bash
+# Development server (port 3000)
 npm run dev
 
-# Compile production bundle
+# Production build
 npm run build
 
 # Start production server
 npm run start
 ```
+
+---
+
+## How It Works
+
+1. **User sends a natural language query** to the AI Buyer Agent.
+2. **AI extracts constraints** (category, budget, specs) and searches the catalog.
+3. **Products are scored and ranked** — best match is recommended with optional upsells.
+4. **Cart is assembled** — line items are attributed (`ai_buyer` vs `user`).
+5. **Policy Engine evaluates** the cart before payment. High-value orders (≥ ₹50,000) are blocked until explicit human approval.
+6. **User approves** → Razorpay order is created → payment is completed via Test Card / UPI / NetBanking.
+7. **Signature is verified** server-side (HMAC SHA256) → order is confirmed and logged to the Audit Trail.
+
+---
+
+## Financial Guardrail Policies
+
+| Policy ID | Action | Condition | Resolution |
+|---|---|---|---|
+| `POL-CAT-01` | Search & Compare | Any | Allowed (Autonomous) |
+| `POL-CART-01` | Add to Cart | Valid catalog item | Allowed (Autonomous) |
+| `POL-PAY-01` | Initiate Payment | Without user approval | Blocked — requires approval |
+| `POL-PAY-02` | Initiate Payment | Amount ≥ ₹50,000 | Explicit approval required |
+| `POL-REF-01` | Refund | AI Agent | Permanently forbidden |
+| `POL-RETRY-01` | Payment failure | Gateway rejection | Halt & log — no auto-retry |
+
+---
+
+## API Reference
+
+### Catalog
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/products` | List catalog items (filters: `category`, `search`) |
+| `POST` | `/api/products` | Create or update a product |
+
+### Agentic Intelligence
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/agent/search` | Natural language query → recommendations |
+| `POST` | `/api/agent/recommend` | Suggest peripherals for a given SKU |
+
+### Cart & Payments
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/cart/:id` | Get active cart |
+| `POST` | `/api/cart` | Add item to cart |
+| `DELETE` | `/api/cart/:cartId/items/:productId` | Remove item |
+| `POST` | `/api/payment/policy-check` | Evaluate guardrails |
+| `POST` | `/api/payment/create-order` | Create Razorpay order |
+| `POST` | `/api/payment/verify` | Verify payment signature |
+
+### Telemetry
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/orders` | List confirmed and failed orders |
+| `GET` | `/api/audit` | Immutable event stream |
+| `GET` | `/api/decisions` | AI decision trees |
+| `GET` | `/api/analytics` | Conversion funnel metrics |
+
+---
+
+## Project Structure
+
+```
+BuyFlow-AI/
+├── server/
+│   ├── agent.ts          # AI Buyer Agent logic
+│   ├── policy.ts         # Financial guardrail policy engine
+│   ├── razorpay.ts       # Razorpay order creation & verification
+│   └── store.ts          # In-memory data store
+├── src/
+│   ├── components/       # React UI components
+│   ├── data/products.ts  # Catalog product data
+│   ├── types.ts          # Shared TypeScript types
+│   └── App.tsx           # Root application component
+├── server.ts             # Express server entry point
+├── .env.example          # Environment variable template
+└── vite.config.ts        # Vite build config
+```
+
+---
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
