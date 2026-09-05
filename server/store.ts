@@ -20,7 +20,7 @@ class Store {
 
   private seedInitialEvents() {
     const now = new Date();
-    const tMinus = (mins: number) => new Date(now.getTime() - mins * 60000).toLocaleTimeString('en-US', { hour12: false });
+    const tMinus = (mins: number) => new Date(now.getTime() - mins * 60000).toISOString();
 
     this.events.push(
       {
@@ -88,7 +88,7 @@ class Store {
   public recordEvent(event: Omit<AgentEvent, 'id' | 'timestamp'>): AgentEvent {
     const newEvent: AgentEvent = {
       id: `EVT-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
-      timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      timestamp: new Date().toISOString(),
       ...event
     };
     this.events.unshift(newEvent); // most recent first
@@ -98,7 +98,7 @@ class Store {
   public recordDecision(decision: Omit<AIDecision, 'id' | 'timestamp'>): AIDecision {
     const newDecision: AIDecision = {
       id: `DEC-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
-      timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      timestamp: new Date().toISOString(),
       ...decision
     };
     this.decisions.unshift(newDecision);
@@ -148,8 +148,8 @@ class Store {
     const totalDiscovered = baseDiscovered + (sessionRequests * 4);
 
     const totalCheckoutAttempts = ordersCount + failedOrders;
-    const paymentSuccessRate = totalCheckoutAttempts > 0 
-      ? Math.round((ordersCount / totalCheckoutAttempts) * 100) 
+    const paymentSuccessRate = totalCheckoutAttempts > 0
+      ? Math.round((ordersCount / totalCheckoutAttempts) * 100)
       : 96;
 
     const baseRevenue = 284500;

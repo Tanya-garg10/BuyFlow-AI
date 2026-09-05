@@ -170,11 +170,10 @@ export const AuditTrailView: React.FC<AuditTrailViewProps> = ({ events, onRefres
               <button
                 key={f}
                 onClick={() => setFilterAgent(f)}
-                className={`px-3.5 py-1.5 rounded-full transition-all uppercase tracking-wider ${
-                  filterAgent === f
-                    ? 'bg-[#121212] text-[#CCFF00] font-bold shadow-sm'
-                    : 'bg-white text-[#121212]/60 hover:text-[#121212] border border-[#121212]/10'
-                }`}
+                className={`px-3.5 py-1.5 rounded-full transition-all uppercase tracking-wider ${filterAgent === f
+                  ? 'bg-[#121212] text-[#CCFF00] font-bold shadow-sm'
+                  : 'bg-white text-[#121212]/60 hover:text-[#121212] border border-[#121212]/10'
+                  }`}
               >
                 {f}
               </button>
@@ -192,13 +191,12 @@ export const AuditTrailView: React.FC<AuditTrailViewProps> = ({ events, onRefres
                 <div key={evt.id} className="relative group">
                   {/* Timeline Node Icon Circle */}
                   <div
-                    className={`absolute -left-6 sm:-left-10 top-2 w-6 h-6 sm:w-8 sm:h-8 rounded-full border flex items-center justify-center transition-all ${
-                      isFailed
-                        ? 'bg-red-50 border-red-500 text-red-600'
-                        : isSuccess
+                    className={`absolute -left-6 sm:-left-10 top-2 w-6 h-6 sm:w-8 sm:h-8 rounded-full border flex items-center justify-center transition-all ${isFailed
+                      ? 'bg-red-50 border-red-500 text-red-600'
+                      : isSuccess
                         ? 'bg-[#CCFF00] border-[#121212] text-[#121212]'
                         : 'bg-white border-[#121212]/30 text-[#121212]'
-                    }`}
+                      }`}
                   >
                     {getEventIcon(evt.event_type)}
                   </div>
@@ -206,11 +204,10 @@ export const AuditTrailView: React.FC<AuditTrailViewProps> = ({ events, onRefres
                   {/* Event Card */}
                   <div
                     onClick={() => setSelectedEventId(isSelected ? null : evt.id)}
-                    className={`cursor-pointer p-5 sm:p-6 rounded-3xl border transition-all ${
-                      isSelected
-                        ? 'bg-[#121212] text-white border-[#121212] shadow-xl'
-                        : 'bg-white text-[#121212] border-[#121212]/10 hover:border-[#121212]/30 shadow-sm'
-                    }`}
+                    className={`cursor-pointer p-5 sm:p-6 rounded-3xl border transition-all ${isSelected
+                      ? 'bg-[#121212] text-white border-[#121212] shadow-xl'
+                      : 'bg-white text-[#121212] border-[#121212]/10 hover:border-[#121212]/30 shadow-sm'
+                      }`}
                   >
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                       <div className="flex items-center space-x-2">
@@ -218,42 +215,38 @@ export const AuditTrailView: React.FC<AuditTrailViewProps> = ({ events, onRefres
                           {evt.event_type}
                         </span>
                         <span
-                          className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase ${
-                            isFailed
-                              ? 'bg-red-100 text-red-700'
-                              : isSuccess
+                          className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase ${isFailed
+                            ? 'bg-red-100 text-red-700'
+                            : isSuccess
                               ? isSelected
                                 ? 'bg-[#CCFF00] text-[#121212]'
                                 : 'bg-[#121212] text-[#CCFF00]'
                               : 'bg-[#121212]/10 text-[#121212]'
-                          }`}
+                            }`}
                         >
                           {evt.status}
                         </span>
                       </div>
 
                       <span
-                        className={`text-[11px] font-mono flex items-center space-x-1 ${
-                          isSelected ? 'text-white/50' : 'text-[#121212]/40'
-                        }`}
+                        className={`text-[11px] font-mono flex items-center space-x-1 ${isSelected ? 'text-white/50' : 'text-[#121212]/40'
+                          }`}
                       >
                         <Clock className="w-3 h-3" />
-                        <span>{new Date(evt.timestamp).toLocaleTimeString('en-IN')}</span>
+                        <span>{isNaN(new Date(evt.timestamp).getTime()) ? evt.timestamp : new Date(evt.timestamp).toLocaleTimeString('en-IN')}</span>
                       </span>
                     </div>
 
                     <p
-                      className={`text-sm mt-2 font-medium leading-relaxed ${
-                        isSelected ? 'text-white/90' : 'text-[#121212]/80'
-                      }`}
+                      className={`text-sm mt-2 font-medium leading-relaxed ${isSelected ? 'text-white/90' : 'text-[#121212]/80'
+                        }`}
                     >
                       {evt.description}
                     </p>
 
                     <div
-                      className={`mt-3 pt-3 border-t flex items-center justify-between text-xs font-mono ${
-                        isSelected ? 'border-white/10 text-white/50' : 'border-[#121212]/5 text-[#121212]/50'
-                      }`}
+                      className={`mt-3 pt-3 border-t flex items-center justify-between text-xs font-mono ${isSelected ? 'border-white/10 text-white/50' : 'border-[#121212]/5 text-[#121212]/50'
+                        }`}
                     >
                       <span>ACTOR: {evt.agent}</span>
                       <span className="flex items-center space-x-1">
@@ -272,7 +265,7 @@ export const AuditTrailView: React.FC<AuditTrailViewProps> = ({ events, onRefres
                           </div>
                           <div>
                             <span className="text-white/40 block">TIMESTAMP:</span>
-                            <span>{new Date(evt.timestamp).toISOString()}</span>
+                            <span>{isNaN(new Date(evt.timestamp).getTime()) ? evt.timestamp : new Date(evt.timestamp).toISOString()}</span>
                           </div>
                         </div>
 
